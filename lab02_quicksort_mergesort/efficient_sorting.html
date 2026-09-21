@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Merge Sort & Quick Sort | DSA</title>
+  <style>
+:root{
+  --ink:#172033;
+  --muted:#677184;
+  --paper:#fbfaf6;
+  --paper-2:#f5f2eb;
+  --navy:#17324d;
+  --navy-2:#244c6a;
+  --accent:#a94732;
+  --accent-soft:#f5e9e3;
+  --line:#d9d6cf;
+  --line-strong:#c8c3ba;
+  --green:#3f7d5c;
+  --green-soft:#edf5ef;
+  --amber:#b97922;
+  --amber-soft:#fbf1dd;
+  --violet:#66558d;
+  --violet-soft:#f0edf7;
+  --shadow:0 10px 28px rgba(23,32,51,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%}
+body{
+  background:#e7e4de;
+  color:var(--ink);
+  font-family:"Segoe UI",Arial,sans-serif;
+  overflow:hidden;
+}
+.slide{
+  display:none;
+  width:100vw;
+  height:100vh;
+  padding:82px 7vw 70px;
+  position:relative;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.72)),
+    var(--paper);
+}
+.slide.active{display:flex;flex-direction:column}
+.slide::before{
+  content:"DATA STRUCTURES & ALGORITHMS";
+  position:absolute;
+  top:24px;
+  left:7vw;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.16em;
+}
+.slide::after{
+  content:"HUS· Efficient Sorting";
+  position:absolute;
+  top:24px;
+  right:7vw;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.04em;
+}
+.slide::before,.slide::after{line-height:1}
+.kicker{
+  margin:0 0 8px;
+  color:var(--accent);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
+h1{
+  margin:12px 0 20px;
+  color:var(--navy);
+  font-size:clamp(46px,5.6vw,78px);
+  line-height:1.02;
+  font-weight:700;
+  letter-spacing:-.025em;
+}
+h2{
+  margin:6px 0 28px;
+  color:var(--navy);
+  font-size:clamp(31px,3.7vw,49px);
+  line-height:1.08;
+  font-weight:700;
+  letter-spacing:-.018em;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line-strong);
+}
+h2::after{
+  content:"";
+  display:block;
+  width:72px;
+  height:3px;
+  margin-top:14px;
+  background:var(--accent);
+}
+h3{
+  margin:0 0 10px;
+  color:var(--navy);
+  font-size:22px;
+  line-height:1.2;
+}
+p,li{
+  font-size:clamp(18px,1.65vw,24px);
+  line-height:1.52;
+}
+li{margin:.18em 0}
+.muted{color:var(--muted)}
+.accent{color:var(--accent);font-weight:700}
+.violet{color:var(--violet)}
+.big{
+  color:var(--navy);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(26px,2.9vw,40px);
+  line-height:1.18;
+  font-weight:700;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{
+  background:rgba(255,255,255,.74);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:22px 24px;
+  box-shadow:0 3px 12px rgba(23,32,51,.04);
+}
+.card h3{
+  margin:-22px -24px 18px;
+  padding:14px 18px 12px;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+}
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border:1px solid #d8c7bf;
+  border-radius:999px;
+  background:var(--accent-soft);
+  color:#7d3425;
+  font-weight:700;
+  font-size:.9em;
+}
+pre{
+  margin:0;
+  padding:22px 24px;
+  overflow:auto;
+  background:#f1efe9;
+  border:1px solid #d6d1c7;
+  border-radius:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+  color:#222b38;
+  font:600 clamp(14px,1.3vw,18px)/1.56 "Cascadia Code",Consolas,monospace;
+}
+.kw{color:#7e3e8f}.fn{color:#1b5f8a}.num{color:#a15f1b}
+.split{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
+.arr{display:flex;gap:6px}
+.cell,.tiny-cell,.pivot-cell{
+  min-width:42px;
+  padding:9px 8px;
+  text-align:center;
+  border-radius:6px;
+  font-weight:800;
+  font-size:18px;
+}
+.cell,.tiny-cell{
+  background:#f7f6f2;
+  border:1px solid #bfc7cf;
+  color:var(--navy);
+}
+.pivot-cell{
+  background:var(--violet-soft);
+  border:1px solid #9487b3;
+  color:#4c3f70;
+}
+.arrow,.merge-arrow{
+  color:var(--accent);
+  font-weight:800;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border:1px solid var(--line-strong);
+  font-size:18px;
+}
+th,td{padding:13px 15px;border-bottom:1px solid var(--line)}
+th{
+  background:var(--navy);
+  color:white;
+  text-align:left;
+  font-weight:700;
+}
+tbody tr:nth-child(even){background:#f7f5ef}
+.viz{display:grid;grid-template-columns:1fr 290px;gap:26px;min-height:410px}
+.bars{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:12px;
+  height:345px;
+  padding:20px;
+  background:#f7f5ef;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+.bar{
+  width:58px;
+  background:var(--navy-2);
+  border-radius:5px 5px 0 0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:8px;
+  font-weight:900;
+  color:white;
+  transition:.3s;
+}
+.bar.hot{background:var(--amber)}
+.bar.done{background:var(--green)}
+.bar.pivot{background:var(--violet)}
+.controls .card{background:#fff}
+.controls button{
+  width:100%;
+  margin:0 0 10px;
+  padding:12px 14px;
+  border:1px solid var(--navy);
+  border-radius:8px;
+  background:var(--navy);
+  color:white;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.controls button:hover{
+  transform:translateY(-1px);
+  background:#0f293f;
+  box-shadow:0 6px 14px rgba(23,50,77,.14);
+}
+.status{
+  min-height:100px;
+  color:#384456;
+  font-size:16px;
+  line-height:1.55;
+}
+.footer{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 7vw;
+  color:#f4f1ea;
+  background:var(--navy);
+  font-size:12px;
+  letter-spacing:.02em;
+}
+.nav{
+  position:fixed;
+  right:18px;
+  bottom:6px;
+  z-index:20;
+  display:flex;
+  gap:6px;
+}
+.nav button{
+  width:32px;
+  height:28px;
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:6px;
+  background:rgba(255,255,255,.08);
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+.nav button:hover{background:rgba(255,255,255,.16)}
+.progress{
+  position:fixed;
+  left:0;
+  bottom:42px;
+  height:3px;
+  background:var(--accent);
+  z-index:30;
+  transition:.25s;
+}
+.slide:first-of-type{
+  justify-content:center;
+  padding-top:120px;
+  background:
+    linear-gradient(90deg,transparent 0 68%,rgba(169,71,50,.06) 68% 100%),
+    var(--paper);
+}
+.slide:first-of-type::before{content:"HUS· DATA STRUCTURES & ALGORITHMS"}
+.slide:first-of-type h1{max-width:840px}
+.slide:first-of-type h1::after{
+  content:"";
+  display:block;
+  width:110px;
+  height:4px;
+  margin-top:24px;
+  background:var(--accent);
+}
+.slide:first-of-type .big{max-width:760px}
+.array-stage{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:center;
+  justify-content:center;
+  min-height:330px;
+  padding:20px;
+  background:#f7f5ef;
+  border:1px solid var(--line);
+  border-radius:10px;
+}
+.array-row{
+  display:flex;
+  gap:26px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  width:100%;
+}
+.array-group{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.array-label{
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.03em;
+}
+.array-box{
+  display:flex;
+  gap:6px;
+  padding:9px 10px;
+  border:1px solid #c4c9ce;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 3px 10px rgba(23,32,51,.04);
+  transition:.25s ease;
+}
+.array-box.active{
+  border-color:#c69451;
+  background:var(--amber-soft);
+}
+.array-box.sorted{
+  border-color:#8eb39a;
+  background:var(--green-soft);
+}
+.array-box.pivot-fixed{
+  border-color:#a89bc1;
+  background:var(--violet-soft);
+}
+.quick-sep{
+  color:#8c819f;
+  font-size:22px;
+  font-weight:900;
+}
+@media(max-width:900px){
+  .grid2,.grid3,.viz{grid-template-columns:1fr}
+  .slide{overflow:auto;padding:80px 5vw 72px}
+  .bars{height:280px}
+  h2{font-size:32px}
+}
+</style>
+</head>
+
+<body>
+  <div class="progress" id="progress"></div>
+  <section class="slide active">
+    <div class="kicker">Lab 02 - Cấu trúc dữ liệu & Thuật toán:</div>
+    <h1>Merge Sort <span class="muted">&</span><br><span class="violet">Quick Sort</span></h1>
+    <p class="big"><span class="accent">Divide & Conquer</span></p>
+    <p class="muted"></p>
+    <div class="footer"><span>HUS · DSA Course</span><span></span></div>
+  </section>
+  <section class="slide">
+    <div class="kicker">Phần I · Merge Sort</div>
+    <h2>Merge Sort: “chia nhỏ rồi ghép lại”</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Ý tưởng cốt lõi</h3>
+        <ol>
+          <li><b>Divide:</b> chia mảng thành hai nửa.</li>
+          <li><b>Conquer:</b> sắp xếp đệ quy từng nửa.</li>
+          <li><b>Combine:</b> trộn hai nửa đã có thứ tự.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Một chút lịch sử</h3>
+        <p>John von Neumann đề xuất Merge Sort vào <b>năm 1945</b>, trong những ngày đầu của máy tính điện tử.</p>
+        <p class="muted">Điểm đặc biệt: hiệu năng O(n log n) được bảo đảm ngay cả trong trường hợp xấu.</p>
+      </div>
+    </div>
+    <div class="footer"><span>01 · Merge Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Merge Sort · Divide từng bước</div><h2>Chia mảng thành các mảng con riêng biệt</h2><div class="card"><p><b>Quy tắc:</b> mỗi lần Divide, một mảng được <span class="accent">tách thành 2 mảng con độc lập</span>. Tiếp tục đến khi mỗi mảng con chỉ còn 1 phần tử.</p><div class="array-stage"><div class="array-row"><div class="array-box"><span class="tiny-cell">38</span><span class="tiny-cell">27</span><span class="tiny-cell">43</span><span class="tiny-cell">3</span><span class="tiny-cell">9</span><span class="tiny-cell">82</span><span class="tiny-cell">10</span></div></div><div class="merge-arrow">↓ Divide</div><div class="array-row"><div class="array-box"><span class="tiny-cell">38</span><span class="tiny-cell">27</span><span class="tiny-cell">43</span><span class="tiny-cell">3</span></div><div class="array-box"><span class="tiny-cell">9</span><span class="tiny-cell">82</span><span class="tiny-cell">10</span></div></div><div class="merge-arrow">↓ Divide tiếp</div><div class="array-row"><div class="array-box"><span class="tiny-cell">38</span><span class="tiny-cell">27</span></div><div class="array-box"><span class="tiny-cell">43</span><span class="tiny-cell">3</span></div><div class="array-box"><span class="tiny-cell">9</span></div><div class="array-box"><span class="tiny-cell">82</span><span class="tiny-cell">10</span></div></div><div class="merge-arrow">↓ Base case</div><div class="array-row"><div class="array-box"><span class="tiny-cell">38</span></div><div class="array-box"><span class="tiny-cell">27</span></div><div class="array-box"><span class="tiny-cell">43</span></div><div class="array-box"><span class="tiny-cell">3</span></div><div class="array-box"><span class="tiny-cell">9</span></div><div class="array-box"><span class="tiny-cell">82</span></div><div class="array-box"><span class="tiny-cell">10</span></div></div></div></div><div class="footer"><span>02 · Merge Sort</span><span>Divide dừng khi mọi mảng con có size = 1</span></div></section><section class="slide"><div class="kicker">Merge Sort · Merge từng bước</div><h2>Ghép lại để tạo mảng đã sắp xếp</h2><div class="card"><p><b>Quy tắc:</b> lấy <span class="accent">hai mảng con đã có thứ tự</span>, merge chúng thành một mảng lớn hơn cũng có thứ tự.</p><div class="array-stage"><div class="array-row"><div class="array-box"><span class="tiny-cell">38</span></div><div class="array-box"><span class="tiny-cell">27</span></div><div class="array-box"><span class="tiny-cell">43</span></div><div class="array-box"><span class="tiny-cell">3</span></div><div class="array-box"><span class="tiny-cell">9</span></div><div class="array-box"><span class="tiny-cell">82</span></div><div class="array-box"><span class="tiny-cell">10</span></div></div><div class="merge-arrow">↑ Merge + sort</div><div class="array-row"><div class="array-box sorted"><span class="tiny-cell">27</span><span class="tiny-cell">38</span></div><div class="array-box sorted"><span class="tiny-cell">3</span><span class="tiny-cell">43</span></div><div class="array-box sorted"><span class="tiny-cell">9</span></div><div class="array-box sorted"><span class="tiny-cell">10</span><span class="tiny-cell">82</span></div></div><div class="merge-arrow">↑ Merge + sort</div><div class="array-row"><div class="array-box sorted"><span class="tiny-cell">3</span><span class="tiny-cell">27</span><span class="tiny-cell">38</span><span class="tiny-cell">43</span></div><div class="array-box sorted"><span class="tiny-cell">9</span><span class="tiny-cell">10</span><span class="tiny-cell">82</span></div></div><div class="merge-arrow">↑ Merge cuối</div><div class="array-row"><div class="array-box sorted"><span class="tiny-cell">3</span><span class="tiny-cell">9</span><span class="tiny-cell">10</span><span class="tiny-cell">27</span><span class="tiny-cell">38</span><span class="tiny-cell">43</span><span class="tiny-cell">82</span></div></div></div></div><div class="footer"><span>03 · Merge Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Merge Sort · pseudo-code</div>
+    <h2>Tách trách nhiệm: <span class="accent">sort</span> và <span class="violet">merge</span></h2>
+    <div class="grid2">
+      <pre>MERGE_SORT(A):
+  if len(A) ≤ 1:
+    return A
+
+  mid = len(A) // 2
+  left  = MERGE_SORT(A[:mid])
+  right = MERGE_SORT(A[mid:])
+
+  return MERGE(left, right)</pre>
+      <pre>MERGE(L, R):
+  result = []
+  while L and R:
+    take smaller front item
+    append it to result
+
+  append remaining items
+  return result</pre>
+    </div>
+    <div class="footer"><span>03 · Merge Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Merge Sort · Java</div><h2>Triển khai bằng Java</h2><pre><span class="kw">static void</span> <span class="fn">mergeSort</span>(int[] a, int left, int right) {
+    <span class="kw">if</span> (left >= right) <span class="kw">return</span>;
+    int mid = left + (right - left) / <span class="num">2</span>;
+    mergeSort(a, left, mid);
+    mergeSort(a, mid + <span class="num">1</span>, right);
+    merge(a, left, mid, right);
+}
+
+<span class="kw">static void</span> <span class="fn">merge</span>(int[] a, int left, int mid, int right) {
+    int[] temp = <span class="kw">new</span> int[right - left + <span class="num">1</span>];
+    int i = left, j = mid + <span class="num">1</span>, k = <span class="num">0</span>;
+    <span class="kw">while</span> (i <= mid && j <= right)
+        temp[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];
+    <span class="kw">while</span> (i <= mid) temp[k++] = a[i++];
+    <span class="kw">while</span> (j <= right) temp[k++] = a[j++];
+    <span class="kw">for</span> (int t = <span class="num">0</span>; t < temp.length; t++) a[left + t] = temp[t];
+}</pre><div class="footer"><span>05 · Merge Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Merge Sort · Complexity</div>
+    <h2>Vì sao là O(n log n)?</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>Thời gian</h3>
+        <p class="big">O(n log n)</p>
+        <p class="muted">Best = Average = Worst</p>
+      </div>
+      <div class="card">
+        <h3>Bộ nhớ phụ</h3>
+        <p class="big">O(n)</p>
+        <p class="muted">Cho các mảng tạm khi merge.</p>
+      </div>
+      <div class="card">
+        <h3>Tính chất</h3>
+        <p class="big">Stable ✓</p>
+        <p class="muted">Giữ thứ tự tương đối của phần tử bằng nhau nếu merge đúng.</p>
+      </div>
+    </div>
+    <p><b>Trực giác:</b> có khoảng <span class="accent">log₂n tầng</span>, mỗi tầng xử lý tổng cộng <span
+        class="accent">n phần tử</span>.</p>
+    <div class="footer"><span>05 · Merge Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Merge Sort · Visualization</div><h2>Quan sát mảng tách ra rồi ghép lại</h2><div class="viz"><div class="array-stage" id="mergeStage"></div><div class="controls"><div class="card" style="margin-bottom:14px"><div class="status" id="mergeStatus"></div></div><button onclick="mergeStep()">▶ Step</button><button onclick="mergeAuto()">⏩ Auto</button><button onclick="resetMerge()">↺ Reset</button></div></div><div class="footer"><span>07 · Merge Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Phần II · Quick Sort</div>
+    <h2>Quick Sort: “đặt pivot đúng chỗ”</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Ý tưởng cốt lõi</h3>
+        <ol>
+          <li>Chọn một <b>pivot</b>.</li>
+          <li><b>Partition:</b> đưa phần tử nhỏ hơn pivot sang trái, lớn hơn sang phải.</li>
+          <li>Đệ quy trên hai phía.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>Một chút lịch sử</h3>
+        <p>Tony Hoare phát minh Quick Sort năm <b>1959</b> và công bố năm <b>1961</b>.</p>
+        <p class="muted">Quick Sort nổi tiếng vì chạy rất nhanh trong thực tế và có thể sắp xếp in-place.</p>
+      </div>
+    </div>
+    <div class="footer"><span>07 · Quick Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Quick Sort · Partition từng bước</div><h2>Tách theo pivot, rồi đệ quy từng mảng con</h2><div class="card"><p><b>Khác Merge Sort:</b> Quick Sort không chia đôi theo vị trí giữa. Nó chọn <span class="violet"><b>pivot</b></span>, partition để tạo <b>mảng trái | pivot | mảng phải</b>.</p><div class="array-stage"><div class="array-row"><div class="array-group"><div class="array-label">Ban đầu · pivot = 10</div><div class="array-box"><span class="tiny-cell">38</span><span class="tiny-cell">27</span><span class="tiny-cell">43</span><span class="tiny-cell">3</span><span class="tiny-cell">9</span><span class="tiny-cell">82</span><span class="pivot-cell">10</span></div></div></div><div class="merge-arrow">↓ Partition theo pivot 10</div><div class="array-row"><div class="array-group"><div class="array-label">&lt; pivot</div><div class="array-box active"><span class="tiny-cell">3</span><span class="tiny-cell">9</span></div></div><div class="quick-sep">|</div><div class="array-group"><div class="array-label">pivot đã đúng vị trí</div><div class="array-box pivot-fixed"><span class="pivot-cell">10</span></div></div><div class="quick-sep">|</div><div class="array-group"><div class="array-label">&gt; pivot</div><div class="array-box active"><span class="tiny-cell">38</span><span class="tiny-cell">27</span><span class="tiny-cell">82</span><span class="tiny-cell">43</span></div></div></div><div class="merge-arrow">↓ Partition tiếp từng mảng trái/phải</div><div class="array-row"><div class="array-box sorted"><span class="tiny-cell">3</span></div><div class="array-box pivot-fixed"><span class="pivot-cell">9</span></div><div class="array-box pivot-fixed"><span class="pivot-cell">10</span></div><div class="array-box active"><span class="tiny-cell">38</span><span class="tiny-cell">27</span></div><div class="array-box pivot-fixed"><span class="pivot-cell">43</span></div><div class="array-box sorted"><span class="tiny-cell">82</span></div></div><div class="merge-arrow">↓ Partition [38,27] với pivot = 27</div><div class="array-row"><div class="array-box sorted"><span class="tiny-cell">3</span></div><div class="array-box sorted"><span class="tiny-cell">9</span></div><div class="array-box sorted"><span class="tiny-cell">10</span></div><div class="array-box sorted"><span class="tiny-cell">27</span></div><div class="array-box sorted"><span class="tiny-cell">38</span></div><div class="array-box sorted"><span class="tiny-cell">43</span></div><div class="array-box sorted"><span class="tiny-cell">82</span></div></div></div><p class="muted"></p></div><div class="footer"><span>09 · Quick Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Quick Sort · pseudo-code</div>
+    <h2>Bản Lomuto partition — dễ học và dễ code</h2>
+    <div class="grid2">
+      <pre>QUICK_SORT(A, low, high):
+  if low < high:
+    p = PARTITION(A, low, high)
+    QUICK_SORT(A, low, p - 1)
+    QUICK_SORT(A, p + 1, high)</pre>
+      <pre>PARTITION(A, low, high):
+  pivot = A[high]
+  i = low
+
+  for j = low .. high - 1:
+    if A[j] <= pivot:
+      swap A[i], A[j]
+      i += 1
+
+  swap A[i], A[high]
+  return i</pre>
+    </div>
+    <div class="footer"><span>09 · Quick Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Quick Sort · Java</div><h2>Triển khai Lomuto partition bằng Java</h2><pre><span class="kw">static void</span> <span class="fn">quickSort</span>(int[] a, int low, int high) {
+    <span class="kw">if</span> (low >= high) <span class="kw">return</span>;
+    int p = partition(a, low, high);
+    quickSort(a, low, p - <span class="num">1</span>);
+    quickSort(a, p + <span class="num">1</span>, high);
+}
+
+<span class="kw">static int</span> <span class="fn">partition</span>(int[] a, int low, int high) {
+    int pivot = a[high], i = low;
+    <span class="kw">for</span> (int j = low; j < high; j++) {
+        <span class="kw">if</span> (a[j] <= pivot) {
+            int tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+            i++;
+        }
+    }
+    int tmp = a[i]; a[i] = a[high]; a[high] = tmp;
+    <span class="kw">return</span> i;
+}</pre><div class="footer"><span>11 · Quick Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Quick Sort · Complexity</div>
+    <h2>Rất nhanh trung bình, nhưng có worst-case</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>Best / Average</h3>
+        <p class="big">O(n log n)</p>
+        <p class="muted">Pivot chia khá cân bằng.</p>
+      </div>
+      <div class="card">
+        <h3>Worst</h3>
+        <p class="big" style="color:var(--red)">O(n²)</p>
+        <p class="muted">Pivot liên tục rơi vào cực trị.</p>
+      </div>
+      <div class="card">
+        <h3>Bộ nhớ</h3>
+        <p class="big">O(log n)*</p>
+        <p class="muted">Stack đệ quy trung bình; worst có thể O(n).</p>
+      </div>
+    </div>
+    <p><b>Giảm rủi ro:</b> random pivot, median-of-three, hoặc giới hạn recursion depth trong triển khai thực tế.</p>
+    <div class="footer"><span>11 · Quick Sort</span><span></span></div>
+  </section>
+  <section class="slide"><div class="kicker">Quick Sort · Visualization</div><h2>Quan sát các mảng con tách ra theo pivot</h2><div class="viz"><div class="array-stage" id="quickStage"></div><div class="controls"><div class="card" style="margin-bottom:14px"><div class="status" id="quickStatus"></div></div><button onclick="quickStep()">▶ Step</button><button onclick="quickAuto()">⏩ Auto</button><button onclick="resetQuick()">↺ Reset</button></div></div><div class="footer"><span>13 · Quick Sort</span><span></span></div></section>
+  <section class="slide">
+    <div class="kicker">Merge Sort vs Quick Sort</div>
+    <h2>Cùng Divide & Conquer, khác “điểm nặng”</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tiêu chí</th>
+          <th>Merge Sort</th>
+          <th>Quick Sort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Average</td>
+          <td>O(n log n)</td>
+          <td>O(n log n)</td>
+        </tr>
+        <tr>
+          <td>Worst</td>
+          <td><b>O(n log n)</b></td>
+          <td><b>O(n²)</b></td>
+        </tr>
+        <tr>
+          <td>Bộ nhớ phụ</td>
+          <td>O(n) cho array</td>
+          <td>O(log n) stack trung bình</td>
+        </tr>
+        <tr>
+          <td>Stable</td>
+          <td>✓ Có</td>
+          <td>✗ Thường không</td>
+        </tr>
+        <tr>
+          <td>In-place</td>
+          <td>Thường không (array)</td>
+          <td>✓ Có</td>
+        </tr>
+        <tr>
+          <td>Điểm mạnh</td>
+          <td>Hiệu năng bảo đảm, linked list, external sorting</td>
+          <td>Cache-friendly, nhanh trong RAM, ít cấp phát</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="footer"><span>13 · So sánh</span><span>Không có thuật toán “tốt nhất” cho mọi bài toán</span></div>
+  </section>
+  <section class="slide">
+    <div class="kicker">Chọn thuật toán</div>
+    <h2>Khi nào dùng cái nào?</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>Ưu tiên Merge Sort khi…</h3>
+        <ul>
+          <li>Cần <b>stable sort</b>.</li>
+          <li>Cần worst-case O(n log n).</li>
+          <li>Dữ liệu lớn / external sorting.</li>
+          <li>Linked list — merge rất tự nhiên.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Ưu tiên Quick Sort khi…</h3>
+        <ul>
+          <li>Sắp xếp array trong RAM.</li>
+          <li>Muốn in-place và cache locality tốt.</li>
+          <li>Chọn pivot tốt / random hóa.</li>
+          <li>Hiệu năng thực tế quan trọng.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="big" style="text-align:center">Câu hỏi nên tự hỏi: <span class="accent">“Ta đang trả giá ở bước chia hay
+        bước gộp?”</span></p>
+    <div class="footer"><span>14 · Kết luận</span><span></span></div>
+  </section>
+  <!-- <section class="slide">
+    <div class="kicker">Mini practice</div>
+    <h2>Thử ngay trên lớp</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>1</h3>
+        <p>Viết tay 2 tầng recursion đầu của Merge Sort cho:</p>
+        <p class="accent">[7, 2, 6, 3, 9, 1]</p>
+      </div>
+      <div class="card">
+        <h3>2</h3>
+        <p>Với Quick Sort (pivot cuối), pivot đầu tiên đứng ở index nào sau partition?</p>
+      </div>
+      <div class="card">
+        <h3>3</h3>
+        <p>Tạo input khiến Quick Sort Lomuto với pivot cuối rơi vào worst-case.</p>
+      </div>
+    </div>
+    <h1 style="margin-top:auto">Questions?</h1>
+    <div class="footer"><span>15 · Practice</span><span>Code it. Trace it. Explain it.</span></div>
+  </section> -->
+  <div class="nav"><button onclick="prevSlide()">Pre</button><button onclick="nextSlide()">Ne</button></div>
+  <script>
+const slides=[...document.querySelectorAll('.slide')];let cur=0;
+function showSlide(i){cur=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,k)=>s.classList.toggle('active',k===cur));document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%'}
+function nextSlide(){showSlide(cur+1)} function prevSlide(){showSlide(cur-1)}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();nextSlide()} if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prevSlide()} if(e.key==='Home')showSlide(0); if(e.key==='End')showSlide(slides.length-1)});
+
+const mergeFrames=[
+{groups:[[38,27,43,3,9,82,10]],active:[0],sorted:[],t:'Bắt đầu: một mảng duy nhất.'},
+{groups:[[38,27,43,3],[9,82,10]],active:[0,1],sorted:[],t:'DIVIDE: mảng ban đầu tách thành 2 mảng con.'},
+{groups:[[38,27],[43,3],[9],[82,10]],active:[0,1,2,3],sorted:[2],t:'DIVIDE tiếp: các mảng con tiếp tục tách riêng.'},
+{groups:[[38],[27],[43],[3],[9],[82],[10]],active:[],sorted:[0,1,2,3,4,5,6],t:'BASE CASE: mỗi mảng con chỉ còn 1 phần tử.'},
+{groups:[[27,38],[3,43],[9],[10,82]],active:[0,1,3],sorted:[0,1,2,3],t:'MERGE + SORT: ghép từng cặp để tạo các mảng đã sắp.'},
+{groups:[[3,27,38,43],[9,10,82]],active:[0,1],sorted:[0,1],t:'MERGE tiếp: tạo các mảng lớn hơn nhưng vẫn có thứ tự.'},
+{groups:[[3,9,10,27,38,43,82]],active:[0],sorted:[0],t:'MERGE CUỐI: ghép thành một mảng duy nhất đã sắp xếp.'}
+];
+let mi=0,mt=null;
+function renderMerge(){const f=mergeFrames[mi],el=document.getElementById('mergeStage');if(!el)return;el.innerHTML='<div class="array-row">'+f.groups.map((g,i)=>'<div class="array-group"><div class="array-label">Mảng '+(i+1)+'</div><div class="array-box '+(f.active.includes(i)?'active ':'')+(f.sorted.includes(i)?'sorted':'')+'">'+g.map(v=>'<span class="tiny-cell">'+v+'</span>').join('')+'</div></div>').join('')+'</div>';document.getElementById('mergeStatus').innerHTML='<b>Bước '+(mi+1)+'/'+mergeFrames.length+'</b><br>'+f.t}
+function mergeStep(){mi=Math.min(mi+1,mergeFrames.length-1);renderMerge()}
+function resetMerge(){clearInterval(mt);mi=0;renderMerge()}
+function mergeAuto(){clearInterval(mt);mt=setInterval(()=>{if(mi>=mergeFrames.length-1){clearInterval(mt);return}mergeStep()},900)}
+
+const quickFrames=[
+{groups:[{a:[38,27,43,3,9,82,10],label:'Đoạn đang xét · pivot = 10',type:'active'}],t:'Chọn phần tử cuối 10 làm pivot.'},
+{groups:[{a:[3,9],label:'Mảng trái < 10',type:'active'},{a:[10],label:'Pivot 10',type:'pivot'},{a:[38,27,82,43],label:'Mảng phải > 10',type:'active'}],t:'PARTITION 1: pivot 10 vào đúng vị trí. Tách thành trái | pivot | phải.'},
+{groups:[{a:[3],label:'Base case',type:'sorted'},{a:[9],label:'Pivot 9',type:'pivot'},{a:[10],label:'Pivot 10',type:'pivot'},{a:[38,27,82,43],label:'Đoạn phải đang xét',type:'active'}],t:'PARTITION 2: đoạn [3,9] với pivot 9 → [3] | 9.'},
+{groups:[{a:[3],label:'Đã xong',type:'sorted'},{a:[9],label:'Pivot 9',type:'pivot'},{a:[10],label:'Pivot 10',type:'pivot'},{a:[38,27],label:'Mảng trái < 43',type:'active'},{a:[43],label:'Pivot 43',type:'pivot'},{a:[82],label:'Base case',type:'sorted'}],t:'PARTITION 3: đoạn [38,27,82,43] với pivot 43 → [38,27] | 43 | [82].'},
+{groups:[{a:[3],label:'Đã xong',type:'sorted'},{a:[9],label:'Đã xong',type:'sorted'},{a:[10],label:'Đã xong',type:'sorted'},{a:[27],label:'Pivot 27',type:'pivot'},{a:[38],label:'Base case',type:'sorted'},{a:[43],label:'Đã xong',type:'sorted'},{a:[82],label:'Đã xong',type:'sorted'}],t:'PARTITION 4: đoạn [38,27] với pivot 27 → 27 | [38]. Mọi đoạn còn lại đều size ≤ 1.'},
+{groups:[{a:[3,9,10,27,38,43,82],label:'Mảng cuối cùng đã sắp xếp',type:'sorted'}],t:'HOÀN TẤT: Quick Sort không merge. Các pivot đã cố định đúng vị trí tạo nên thứ tự cuối cùng.'}
+];
+let qi=0,qt=null;
+function renderQuick(){const f=quickFrames[qi],el=document.getElementById('quickStage');if(!el)return;el.innerHTML='<div class="array-row">'+f.groups.map(g=>'<div class="array-group"><div class="array-label">'+g.label+'</div><div class="array-box '+(g.type==='active'?'active':g.type==='pivot'?'pivot-fixed':g.type==='sorted'?'sorted':'')+'">'+g.a.map(v=>'<span class="'+(g.type==='pivot'?'pivot-cell':'tiny-cell')+'">'+v+'</span>').join('')+'</div></div>').join('')+'</div>';document.getElementById('quickStatus').innerHTML='<b>Bước '+(qi+1)+'/'+quickFrames.length+'</b><br>'+f.t}
+function quickStep(){qi=Math.min(qi+1,quickFrames.length-1);renderQuick()}
+function resetQuick(){clearInterval(qt);qi=0;renderQuick()}
+function quickAuto(){clearInterval(qt);qt=setInterval(()=>{if(qi>=quickFrames.length-1){clearInterval(qt);return}quickStep()},900)}
+
+showSlide(0);renderMerge();renderQuick();
+</script>
+</body>
+
+</html>
