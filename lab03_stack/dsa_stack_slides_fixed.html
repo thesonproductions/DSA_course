@@ -1,0 +1,767 @@
+﻿<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Stack | Ngăn xếp | DSA</title>
+  <style>
+:root{
+  --ink:#172033;
+  --muted:#677184;
+  --paper:#fbfaf6;
+  --paper-2:#f5f2eb;
+  --navy:#17324d;
+  --navy-2:#244c6a;
+  --accent:#a94732;
+  --accent-soft:#f5e9e3;
+  --line:#d9d6cf;
+  --line-strong:#c8c3ba;
+  --green:#3f7d5c;
+  --green-soft:#edf5ef;
+  --amber:#b97922;
+  --amber-soft:#fbf1dd;
+  --violet:#66558d;
+  --violet-soft:#f0edf7;
+  --red:#b54848;
+  --red-soft:#f8e8e8;
+  --shadow:0 10px 28px rgba(23,32,51,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%}
+body{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  background:#e7e4de;
+  color:var(--ink);
+  font-family:Arial,"Segoe UI",Tahoma,"Noto Sans","DejaVu Sans",sans-serif;
+  overflow:hidden;
+}
+.slide{
+  display:none;
+  width:100vw;
+  height:100vh;
+  padding:82px 7vw 70px;
+  position:relative;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.72)),
+    var(--paper);
+}
+.slide.active{display:flex;flex-direction:column}
+.slide::before{
+  content:"DATA STRUCTURES & ALGORITHMS";
+  position:absolute;
+  top:24px;
+  left:7vw;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.16em;
+}
+.slide::after{
+  content:"HUS · Stack";
+  position:absolute;
+  top:24px;
+  right:7vw;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.04em;
+}
+.slide::before,.slide::after{line-height:1}
+.kicker{
+  margin:0 0 8px;
+  color:var(--accent);
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+h1,h2,h3{font-family:Arial,"Segoe UI",Tahoma,"Noto Sans","DejaVu Sans",sans-serif}
+h1{
+  margin:12px 0 20px;
+  color:var(--navy);
+  font-size:clamp(46px,5.6vw,78px);
+  line-height:1.02;
+  font-weight:700;
+  letter-spacing:-.025em;
+}
+h2{
+  margin:6px 0 28px;
+  color:var(--navy);
+  font-size:clamp(31px,3.7vw,49px);
+  line-height:1.08;
+  font-weight:700;
+  letter-spacing:-.018em;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line-strong);
+}
+h2::after{
+  content:"";
+  display:block;
+  width:72px;
+  height:3px;
+  margin-top:14px;
+  background:var(--accent);
+}
+h3{margin:0 0 10px;color:var(--navy);font-size:22px;line-height:1.2}
+p,li{font-size:clamp(18px,1.65vw,24px);line-height:1.52}
+li{margin:.18em 0}.muted{color:var(--muted)}.accent{color:var(--accent);font-weight:700}.violet{color:var(--violet);font-weight:700}.green{color:var(--green);font-weight:700}
+.big{color:var(--navy);font-family:Arial,"Segoe UI",Tahoma,"Noto Sans","DejaVu Sans",sans-serif;font-size:clamp(26px,2.9vw,40px);line-height:1.18;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.wide{grid-column:1/-1}
+.card{background:rgba(255,255,255,.74);border:1px solid var(--line);border-radius:10px;padding:22px 24px;box-shadow:0 3px 12px rgba(23,32,51,.04)}
+.card h3{margin:-22px -24px 18px;padding:14px 18px 12px;border-bottom:1px solid var(--line);background:transparent}
+.badge{display:inline-block;padding:6px 10px;border:1px solid #d8c7bf;border-radius:999px;background:var(--accent-soft);color:#7d3425;font-weight:700;font-size:.9em}.badge.green{background:var(--green-soft);border-color:#bfd4c7;color:#285c41}.badge.violet{background:var(--violet-soft);border-color:#c9c0de;color:#4c3f70}.badge.amber{background:var(--amber-soft);border-color:#e2c994;color:#7d4f11}
+pre{margin:0;padding:20px 22px;overflow:auto;background:#f1efe9;border:1px solid #d6d1c7;border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.55);color:#222b38;font:600 clamp(13px,1.15vw,17px)/1.5 Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;tab-size:2;white-space:pre-wrap}.kw{color:#7e3e8f}.fn{color:#1b5f8a}.num{color:#a15f1b}.cm{color:#6b7d67;font-weight:500}.str{color:#9b4b62}.type{color:#3f7d5c}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line-strong);font-size:18px}th,td{padding:13px 15px;border-bottom:1px solid var(--line)}th{background:var(--navy);color:white;text-align:left;font-weight:700}tbody tr:nth-child(even){background:#f7f5ef}.center{text-align:center}.small{font-size:16px}.tight p,.tight li{font-size:20px}
+.footer{position:absolute;left:0;right:0;bottom:0;height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 7vw;color:#f4f1ea;background:var(--navy);font-size:12px;letter-spacing:.02em}.nav{position:fixed;right:18px;bottom:6px;z-index:20;display:flex;gap:6px}.nav button{width:32px;height:28px;border:1px solid rgba(255,255,255,.35);border-radius:6px;background:rgba(255,255,255,.08);color:white;font-size:15px;cursor:pointer}.nav button:hover{background:rgba(255,255,255,.16)}.progress{position:fixed;left:0;bottom:42px;height:3px;background:var(--accent);z-index:30;transition:.25s}
+.slide:first-of-type{justify-content:center;padding-top:120px;background:linear-gradient(90deg,transparent 0 68%,rgba(169,71,50,.06) 68% 100%),var(--paper)}.slide:first-of-type::before{content:"HUS · DATA STRUCTURES & ALGORITHMS"}.slide:first-of-type h1{max-width:860px}.slide:first-of-type h1::after{content:"";display:block;width:110px;height:4px;margin-top:24px;background:var(--accent)}.slide:first-of-type .big{max-width:760px}
+.stack-demo{display:grid;grid-template-columns:1fr 330px;gap:26px;min-height:430px}.stage{display:flex;align-items:center;justify-content:center;min-height:420px;padding:20px;background:#f7f5ef;border:1px solid var(--line);border-radius:10px;position:relative;overflow:hidden}.controls .card{background:#fff}.controls button{width:100%;margin:0 0 10px;padding:12px 14px;border:1px solid var(--navy);border-radius:8px;background:var(--navy);color:white;font-weight:700;font-size:15px;cursor:pointer;transition:.18s ease}.controls button.secondary{background:#fff;color:var(--navy)}.controls button:hover{transform:translateY(-1px);background:#0f293f;color:#fff;box-shadow:0 6px 14px rgba(23,50,77,.14)}.status{min-height:120px;color:#384456;font-size:16px;line-height:1.55}.status code{font-family:Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;background:#f3f0ea;padding:2px 6px;border-radius:5px}
+.stack-wrap{display:flex;gap:30px;align-items:center;justify-content:center}.stack-shell{display:flex;flex-direction:column-reverse;justify-content:flex-start;width:150px;height:330px;border-left:5px solid var(--navy);border-right:5px solid var(--navy);border-bottom:5px solid var(--navy);border-radius:0 0 8px 8px;padding:8px;background:#fff;box-shadow:var(--shadow)}.stack-item{height:47px;margin-top:6px;border-radius:7px;background:var(--green-soft);border:1px solid #83ad92;color:#244d36;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;animation:popIn .25s ease}.stack-item.top{background:var(--accent-soft);border-color:#d09b8d;color:#7d3425}.stack-labels{display:flex;flex-direction:column;gap:16px;font-weight:800}.stack-labels .arrow{color:var(--accent);font-size:28px}.underflow{background:var(--red-soft)!important;border-color:#d8a6a6!important;color:#813333!important}
+.array-line{display:flex;gap:8px;align-items:end;justify-content:center;flex-wrap:wrap}.slot{width:62px;min-height:58px;background:#fff;border:2px dashed #c2c7cc;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;position:relative}.slot.filled{border-style:solid;border-color:#83ad92;background:var(--green-soft);color:#244d36}.slot.top::after{content:"top";position:absolute;top:-31px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:900;color:var(--accent);text-transform:uppercase}.slot.empty::after{content:"empty";font-size:12px;color:#9ba1aa}.capacity-note{position:absolute;left:24px;bottom:18px;color:var(--muted);font-size:15px}.expand-flash{animation:flash .7s ease}
+.list-stage{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}.node{min-width:108px;background:#fff;border:2px solid #aeb8c3;border-radius:9px;box-shadow:0 3px 10px rgba(23,32,51,.06);overflow:hidden;animation:popIn .22s ease}.node .data{padding:12px 18px;background:var(--green-soft);color:#244d36;font-weight:900;text-align:center;font-size:22px}.node .next{padding:8px 16px;border-top:1px solid #d8d8d8;color:var(--muted);font-size:14px;text-align:center}.node.top-node{border-color:#c98f7f}.node.top-node .data{background:var(--accent-soft);color:#7d3425}.ptr{font-weight:900;color:var(--accent);font-size:24px}.null-box{padding:11px 15px;border-radius:8px;background:#ece9e1;border:1px solid #ccc5bb;font-weight:800;color:var(--muted)}.top-label{position:absolute;top:24px;left:24px;color:var(--accent);font-weight:900;letter-spacing:.06em}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.legend span{font-size:14px;padding:6px 9px;border-radius:999px;border:1px solid var(--line);background:#fff}
+.expr{font:800 24px/1.35 Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;text-align:center;margin-bottom:16px}.token-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}.token{min-width:42px;padding:9px 11px;border-radius:7px;background:#fff;border:1px solid #bfc7cf;font-weight:900;text-align:center}.token.current{background:var(--amber-soft);border-color:#c69451;color:#7d4f11}.token.done{background:var(--green-soft);border-color:#8eb39a;color:#285c41}.token.bad{background:var(--red-soft);border-color:#d8a6a6;color:#813333}.mini-stack{min-width:125px;min-height:220px;display:flex;flex-direction:column-reverse;justify-content:flex-start;align-items:stretch;border-left:4px solid var(--navy);border-right:4px solid var(--navy);border-bottom:4px solid var(--navy);background:#fff;padding:6px;border-radius:0 0 8px 8px}.mini-item{margin-top:5px;padding:8px 10px;border-radius:6px;background:var(--violet-soft);border:1px solid #aa9fc1;text-align:center;font-weight:900;color:#4c3f70}.output-box{min-height:56px;background:#fff;border:1px solid var(--line-strong);border-radius:8px;padding:12px 14px;font:800 20px/1.4 Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;color:var(--navy)}.two-stacks{display:flex;gap:32px;align-items:center;justify-content:center;flex-wrap:wrap}.caption{font-weight:800;color:var(--muted);font-size:14px;text-align:center;margin:8px 0}
+@keyframes popIn{from{transform:translateY(-10px);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes flash{0%{box-shadow:0 0 0 0 rgba(185,121,34,.6)}100%{box-shadow:0 0 0 22px rgba(185,121,34,0)}}
+@media(max-width:980px){.grid2,.grid3,.stack-demo{grid-template-columns:1fr}.slide{overflow:auto;padding:80px 5vw 72px}.stage{min-height:320px}h2{font-size:32px}pre{font-size:14px}.stack-demo{min-height:auto}.slide::before{left:5vw}.slide::after{right:5vw}.footer{padding:0 5vw}.stack-shell{height:260px}}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <section class="slide active">
+    <div class="kicker">Bài 03 · Cấu trúc dữ liệu & Thuật toán</div>
+    <h1>Ngăn xếp<br><span class="violet">Stack</span></h1>
+    <p class="big"><span class="accent">LIFO</span> · Last In, First Out</p>
+    <p class="muted">Java-like pseudocode · Array Stack · Linked-list Stack · Ứng dụng biểu thức</p>
+    <div class="footer"><span>HUS · DSA Course</span><span>Stack</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Khái niệm</div>
+    <h2>Stack là gì?</h2>
+    <div class="grid2">
+      <div class="card tight">
+        <h3>Ý tưởng cốt lõi</h3>
+        <p><b>Ngăn xếp</b> lưu trữ và lấy dữ liệu theo nguyên tắc <span class="accent">vào sau, ra trước</span>.</p>
+        <p class="big">LIFO = Last In, First Out</p>
+        <ul>
+          <li><b>top</b>: đỉnh ngăn xếp.</li>
+          <li><b>bottom</b>: đáy ngăn xếp.</li>
+          <li>Chỉ thao tác trực tiếp tại <b>top</b>.</li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="stack-wrap">
+          <div class="stack-shell" aria-label="stack example">
+            <div class="stack-item">2</div>
+            <div class="stack-item">3</div>
+            <div class="stack-item">5</div>
+            <div class="stack-item top">7</div>
+          </div>
+          <div class="stack-labels">
+            <div><span class="arrow">←</span> top</div>
+            <div style="height:210px"></div>
+            <div><span class="arrow">←</span> bottom</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>01 · Concept</span><span>LIFO: phần tử thêm sau cùng được lấy ra đầu tiên</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Interface</div>
+    <h2>Các thao tác cơ bản của Stack</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>SimpleStack&lt;T&gt;</h3>
+        <table>
+          <thead><tr><th>Phương thức</th><th>Ý nghĩa</th></tr></thead>
+          <tbody>
+            <tr><td><code>push(x)</code></td><td>Thêm phần tử <code>x</code> vào đỉnh stack.</td></tr>
+            <tr><td><code>pop()</code></td><td>Lấy và xoá phần tử ở đỉnh stack.</td></tr>
+            <tr><td><code>size()</code></td><td>Trả về số phần tử hiện có.</td></tr>
+            <tr><td><code>isEmpty()</code></td><td>Kiểm tra stack có rỗng hay không.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><span class="kw">public interface</span> <span class="type">SimpleStack</span>&lt;T&gt; {
+    <span class="kw">void</span> <span class="fn">push</span>(T item);
+
+    T <span class="fn">pop</span>();
+
+    <span class="kw">int</span> <span class="fn">size</span>();
+
+    <span class="kw">boolean</span> <span class="fn">isEmpty</span>();
+}</pre>
+    </div>
+    <div class="footer"><span>02 · API</span><span>push/pop/size/isEmpty</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Visualization</div>
+    <h2>Quan sát thao tác <span class="accent">push</span> và <span class="violet">pop</span></h2>
+    <div class="stack-demo">
+      <div class="stage">
+        <div class="stack-wrap">
+          <div class="stack-shell" id="stackShell"></div>
+          <div class="stack-labels">
+            <div><span class="arrow">←</span> top</div>
+            <div style="height:210px"></div>
+            <div><span class="arrow">←</span> bottom</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="card" style="margin-bottom:14px"><div class="status" id="stackStatus"></div></div>
+        <button onclick="pushStack()">push(x)</button>
+        <button onclick="popStack()">pop()</button>
+        <button class="secondary" onclick="resetStack()">reset</button>
+      </div>
+    </div>
+    <div class="footer"><span>03 · Stack operations</span><span>Chỉ phần tử top được thêm/xoá trực tiếp</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Array Stack</div>
+    <h2>Cài đặt Stack bằng mảng</h2>
+    <div class="grid2">
+      <div class="card tight">
+        <h3>Ý tưởng</h3>
+        <ul>
+          <li>Dùng mảng <code>elements[]</code> để lưu phần tử.</li>
+          <li>Biến <code>top</code> trỏ tới vị trí đỉnh stack.</li>
+          <li>Thêm/xoá ở cuối vùng đang dùng của mảng.</li>
+          <li>Khi mảng đầy, có thể <span class="accent">mở rộng mảng</span>.</li>
+        </ul>
+        <p><span class="badge green">push O(1)</span> <span class="badge green">pop O(1)</span> <span class="badge amber">có giới hạn capacity</span></p>
+      </div>
+      <pre><span class="kw">public class</span> <span class="type">SimpleArrayStack</span>&lt;T&gt;
+        <span class="kw">implements</span> <span class="type">SimpleStack</span>&lt;T&gt; {
+
+    <span class="kw">private</span> Object[] elements;
+    <span class="kw">private int</span> top = -<span class="num">1</span>;
+    <span class="kw">private int</span> size = <span class="num">0</span>;
+
+    <span class="kw">public</span> <span class="fn">SimpleArrayStack</span>(<span class="kw">int</span> capacity) {
+        elements = <span class="kw">new</span> Object[capacity];
+    }
+}</pre>
+    </div>
+    <div class="footer"><span>04 · Array implementation</span><span>top = -1 nghĩa là stack rỗng</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Array Stack · Java-like pseudocode</div>
+    <h2>Mã giả Java: <span class="accent">push</span>, <span class="violet">pop</span>, <span class="green">size</span></h2>
+    <div class="grid2">
+      <pre><span class="kw">public void</span> <span class="fn">push</span>(T item) {
+    <span class="kw">if</span> (size == elements.length) {
+        <span class="fn">enlarge</span>();
+    }
+
+    top = top + <span class="num">1</span>;
+    elements[top] = item;
+    size = size + <span class="num">1</span>;
+}</pre>
+      <pre><span class="kw">public</span> T <span class="fn">pop</span>() {
+    <span class="kw">if</span> (<span class="fn">isEmpty</span>()) {
+        <span class="kw">throw new</span> RuntimeException(<span class="str">"Stack empty"</span>);
+    }
+
+    T item = (T) elements[top];
+    elements[top] = <span class="kw">null</span>;
+    top = top - <span class="num">1</span>;
+    size = size - <span class="num">1</span>;
+    <span class="kw">return</span> item;
+}</pre>
+      <pre class="wide"><span class="kw">public int</span> <span class="fn">size</span>() { <span class="kw">return</span> size; }
+<span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> size == <span class="num">0</span>; }</pre>
+    </div>
+    <div class="footer"><span>05 · Array Stack pseudocode</span><span>Thao tác chính chỉ thay đổi top và size</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Dynamic Array</div>
+    <h2>Mở rộng mảng bằng <span class="accent">Repeated Doubling</span></h2>
+    <div class="stack-demo">
+      <div class="stage" id="arrayStage">
+        <div>
+          <div class="array-line" id="arrayLine"></div>
+          <div class="capacity-note" id="capacityNote"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="card" style="margin-bottom:14px"><div class="status" id="arrayStatus"></div></div>
+        <button onclick="pushArrayDemo()">push()</button>
+        <button onclick="resetArrayDemo()" class="secondary">reset</button>
+      </div>
+    </div>
+    <div class="footer"><span>06 · Dynamic array</span><span>Khi đầy: cấp phát mảng mới gấp đôi, copy dữ liệu sang</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Dynamic Array · Java-like pseudocode</div>
+    <h2>Hàm <span class="accent">enlarge()</span>: tạo mảng mới rồi copy</h2>
+    <div class="grid2">
+      <pre><span class="kw">private void</span> <span class="fn">enlarge</span>() {
+    <span class="kw">int</span> newCapacity = elements.length * <span class="num">2</span>;
+    Object[] newElements = <span class="kw">new</span> Object[newCapacity];
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; size; i++) {
+        newElements[i] = elements[i];
+    }
+
+    elements = newElements;
+}</pre>
+      <div class="card tight">
+        <h3>Ghi nhớ</h3>
+        <ul>
+          <li>Không nên tăng capacity từng ô một.</li>
+          <li>Tăng gấp đôi giúp giảm số lần copy.</li>
+          <li>Một lần enlarge tốn O(n), nhưng trung bình mỗi push vẫn hiệu quả.</li>
+        </ul>
+        <p><span class="badge amber">Capacity: 4 → 8 → 16</span></p>
+      </div>
+    </div>
+    <div class="footer"><span>07 · enlarge()</span><span>Repeated Doubling Technique</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Linked-list Stack</div>
+    <h2>Cài đặt Stack bằng danh sách liên kết đơn</h2>
+    <div class="grid2">
+      <div class="card tight">
+        <h3>Ý tưởng</h3>
+        <ul>
+          <li>Mỗi phần tử là một <code>Node</code>.</li>
+          <li><code>top</code> là node đầu của danh sách.</li>
+          <li><code>push</code>: thêm node mới vào đầu danh sách.</li>
+          <li><code>pop</code>: lấy node đầu và chuyển <code>top</code> sang node kế tiếp.</li>
+        </ul>
+        <p><span class="badge green">không cần capacity cố định</span> <span class="badge violet">dùng con trỏ next</span></p>
+      </div>
+      <pre><span class="kw">private class</span> <span class="type">Node</span> {
+    T data;
+    Node next;
+
+    <span class="fn">Node</span>(T data, Node next) {
+        <span class="kw">this</span>.data = data;
+        <span class="kw">this</span>.next = next;
+    }
+}
+
+<span class="kw">private</span> Node top = <span class="kw">null</span>;
+<span class="kw">private int</span> size = <span class="num">0</span>;</pre>
+    </div>
+    <div class="footer"><span>08 · Linked-list implementation</span><span>top chính là phần tử đầu danh sách</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Linked-list Stack · Visualization</div>
+    <h2>push/pop trên danh sách liên kết</h2>
+    <div class="stack-demo">
+      <div class="stage">
+        <div class="top-label">top</div>
+        <div class="list-stage" id="listStage"></div>
+      </div>
+      <div class="controls">
+        <div class="card" style="margin-bottom:14px"><div class="status" id="listStatus"></div></div>
+        <button onclick="pushListDemo()">push(x)</button>
+        <button onclick="popListDemo()">pop()</button>
+        <button onclick="resetListDemo()" class="secondary">reset</button>
+      </div>
+    </div>
+    <div class="footer"><span>09 · Linked-list Stack</span><span>push: node.next = top; top = node</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Linked-list Stack · Java-like pseudocode</div>
+    <h2>Mã giả Java: thêm và xoá ở đầu danh sách</h2>
+    <div class="grid2">
+      <pre><span class="kw">public void</span> <span class="fn">push</span>(T item) {
+    Node node = <span class="kw">new</span> Node(item, top);
+    top = node;
+    size++;
+}</pre>
+      <pre><span class="kw">public</span> T <span class="fn">pop</span>() {
+    <span class="kw">if</span> (<span class="fn">isEmpty</span>()) {
+        <span class="kw">throw new</span> RuntimeException(<span class="str">"Stack empty"</span>);
+    }
+
+    T item = top.data;
+    top = top.next;
+    size--;
+    <span class="kw">return</span> item;
+}</pre>
+      <pre class="wide"><span class="kw">public int</span> <span class="fn">size</span>() { <span class="kw">return</span> size; }
+<span class="kw">public boolean</span> <span class="fn">isEmpty</span>() { <span class="kw">return</span> top == <span class="kw">null</span>; }</pre>
+    </div>
+    <div class="footer"><span>10 · Linked-list pseudocode</span><span>Không dịch chuyển dữ liệu, chỉ đổi liên kết</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">So sánh</div>
+    <h2>Array Stack vs Linked-list Stack</h2>
+    <table>
+      <thead><tr><th>Tiêu chí</th><th>Array Stack</th><th>Linked-list Stack</th></tr></thead>
+      <tbody>
+        <tr><td>Vị trí thao tác</td><td>Cuối vùng đang dùng của mảng</td><td>Đầu danh sách liên kết</td></tr>
+        <tr><td>push/pop</td><td>O(1), trừ lúc mở rộng mảng</td><td>O(1)</td></tr>
+        <tr><td>Bộ nhớ</td><td>Cần capacity; có thể dư ô trống</td><td>Mỗi node cần thêm con trỏ <code>next</code></td></tr>
+        <tr><td>Ưu điểm</td><td>Truy cập bộ nhớ liên tục, đơn giản, cache-friendly</td><td>Linh hoạt kích thước, không cần dự đoán capacity</td></tr>
+        <tr><td>Nhược điểm</td><td>Phải xử lý khi mảng đầy</td><td>Cấp phát nhiều node, tốn overhead con trỏ</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Trong bài thực hành, sinh viên nên cài đặt cả hai để hiểu sự khác nhau giữa lưu trữ kế tiếp và lưu trữ liên kết.</p>
+    <div class="footer"><span>11 · Comparison</span><span>Hai cách lưu trữ, cùng một interface</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Ứng dụng 1</div>
+    <h2>Kiểm tra biểu thức đúng ngoặc</h2>
+    <div class="stack-demo">
+      <div class="stage" style="flex-direction:column">
+        <div class="expr" id="parenExpr"></div>
+        <div class="token-row" id="parenTokens"></div>
+        <div class="two-stacks">
+          <div>
+            <div class="caption">Stack ký tự</div>
+            <div class="mini-stack" id="parenStack"></div>
+          </div>
+          <div class="output-box" id="parenResult"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="card" style="margin-bottom:14px"><div class="status" id="parenStatus"></div></div>
+        <button onclick="parenStep()">▶ Step</button>
+        <button onclick="parenReset()" class="secondary">reset</button>
+      </div>
+    </div>
+    <div class="footer"><span>12 · Balanced parentheses</span><span>Gặp '(' thì push, gặp ')' thì pop</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Ứng dụng 1 · Java-like pseudocode</div>
+    <h2>Mã giả Java: kiểm tra ngoặc</h2>
+    <div class="grid2">
+      <pre><span class="kw">public static boolean</span> <span class="fn">isBalanced</span>(String expr) {
+    <span class="type">SimpleStack</span>&lt;Character&gt; stack = <span class="kw">new</span> <span class="type">SimpleArrayStack</span>&lt;&gt;();
+
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; expr.length(); i++) {
+        <span class="kw">char</span> c = expr.charAt(i);
+
+        <span class="kw">if</span> (c == <span class="str">'('</span>) stack.push(c);
+
+        <span class="kw">if</span> (c == <span class="str">')'</span>) {
+            <span class="kw">if</span> (stack.isEmpty()) <span class="kw">return false</span>;
+            stack.pop();
+        }
+    }
+
+    <span class="kw">return</span> stack.isEmpty();
+}</pre>
+      <div class="card tight">
+        <h3>Logic kiểm tra</h3>
+        <ol>
+          <li>Dấu mở <code>(</code>: chờ một dấu đóng tương ứng.</li>
+          <li>Dấu đóng <code>)</code>: phải có dấu mở trước đó.</li>
+          <li>Duyệt xong: stack phải rỗng.</li>
+        </ol>
+        <p><span class="badge green">true</span> nếu mọi dấu mở đều được đóng đúng.</p>
+      </div>
+    </div>
+    <div class="footer"><span>13 · Parentheses pseudocode</span><span>Ứng dụng stack kinh điển</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Ứng dụng 2</div>
+    <h2>Tính giá trị biểu thức hậu tố</h2>
+    <div class="stack-demo">
+      <div class="stage" style="flex-direction:column">
+        <div class="expr">6 2 4 + *</div>
+        <div class="token-row" id="postTokens"></div>
+        <div class="two-stacks">
+          <div>
+            <div class="caption">Stack toán hạng</div>
+            <div class="mini-stack" id="postStack"></div>
+          </div>
+          <div class="output-box" id="postResult"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="card" style="margin-bottom:14px"><div class="status" id="postStatus"></div></div>
+        <button onclick="postStep()">▶ Step</button>
+        <button onclick="postReset()" class="secondary">reset</button>
+      </div>
+    </div>
+    <div class="footer"><span>14 · Postfix evaluation</span><span>Gặp số: push · gặp toán tử: pop 2 toán hạng rồi push kết quả</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Ứng dụng 2 · Java-like pseudocode</div>
+    <h2>Mã giả Java: tính biểu thức hậu tố</h2>
+    <div class="grid2">
+      <pre><span class="kw">public static int</span> <span class="fn">evalPostfix</span>(String expr) {
+    <span class="type">SimpleStack</span>&lt;Integer&gt; stack = <span class="kw">new</span> <span class="type">SimpleLinkedStack</span>&lt;&gt;();
+
+    <span class="kw">for</span> (String token : expr.split(<span class="str">" "</span>)) {
+        <span class="kw">if</span> (token.matches(<span class="str">"-?\\d+"</span>)) {
+            stack.push(Integer.parseInt(token));
+        } <span class="kw">else</span> {
+            <span class="kw">int</span> b = stack.pop();
+            <span class="kw">int</span> a = stack.pop();
+            stack.push(<span class="fn">apply</span>(a, b, token));
+        }
+    }
+    <span class="kw">return</span> stack.pop();
+}</pre>
+      <pre><span class="kw">private static int</span> <span class="fn">apply</span>(<span class="kw">int</span> a, <span class="kw">int</span> b, String op) {
+    <span class="kw">switch</span> (op) {
+        <span class="kw">case</span> <span class="str">"+"</span>: <span class="kw">return</span> a + b;
+        <span class="kw">case</span> <span class="str">"-"</span>: <span class="kw">return</span> a - b;
+        <span class="kw">case</span> <span class="str">"*"</span>: <span class="kw">return</span> a * b;
+        <span class="kw">case</span> <span class="str">"/"</span>: <span class="kw">return</span> a / b;
+        <span class="kw">default</span>: <span class="kw">throw new</span> RuntimeException(<span class="str">"Bad op"</span>);
+    }
+}</pre>
+    </div>
+    <div class="footer"><span>15 · Postfix pseudocode</span><span>Thứ tự toán hạng: a op b, trong đó b pop ra trước</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Ứng dụng 3</div>
+    <h2>Chuyển trung tố sang hậu tố</h2>
+    <div class="grid2">
+      <div class="card tight">
+        <h3>Quy tắc trực giác</h3>
+        <ol>
+          <li>Toán hạng: đưa thẳng ra output.</li>
+          <li>Toán tử: so độ ưu tiên với toán tử ở đỉnh stack.</li>
+          <li>Dấu <code>(</code>: push vào stack.</li>
+          <li>Dấu <code>)</code>: pop đến khi gặp <code>(</code>.</li>
+          <li>Duyệt xong: pop hết toán tử còn lại.</li>
+        </ol>
+      </div>
+      <div class="stage" style="min-height:330px;flex-direction:column">
+        <div class="expr">a * ( b - c ) / d</div>
+        <div class="token-row">
+          <span class="token done">a</span><span class="token">*</span><span class="token">(</span><span class="token">b</span><span class="token">-</span><span class="token">c</span><span class="token">)</span><span class="token">/</span><span class="token">d</span>
+        </div>
+        <div class="output-box" style="width:100%;text-align:center">Output hậu tố: <span class="accent">a b c - * d /</span></div>
+        <div class="legend"><span>Stack giữ toán tử tạm thời</span><span>Output giữ biểu thức hậu tố</span></div>
+      </div>
+    </div>
+    <div class="footer"><span>16 · Infix → Postfix</span><span>Stack giúp xử lý ưu tiên toán tử và ngoặc</span></div>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">Tổng kết</div>
+    <h2>Những ý cần nhớ</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>1 · Bản chất</h3>
+        <p class="big">LIFO</p>
+        <p class="muted">Phần tử vào sau được lấy ra trước.</p>
+      </div>
+      <div class="card">
+        <h3>2 · Cài đặt</h3>
+        <p><span class="badge green">Array</span> <span class="badge violet">Linked list</span></p>
+        <p class="muted">Cùng interface, khác cách lưu trữ.</p>
+      </div>
+      <div class="card">
+        <h3>3 · Ứng dụng</h3>
+        <p>Undo, back browser, kiểm tra ngoặc, tính hậu tố, xử lý biểu thức.</p>
+      </div>
+    </div>
+    <p class="big" style="margin-top:34px">Câu hỏi mở: Khi nào nên chọn Array Stack, khi nào nên chọn Linked-list Stack?</p>
+    <div class="footer"><span>17 · Summary</span><span>Stack là cấu trúc nhỏ nhưng dùng rất nhiều trong thuật toán</span></div>
+  </section>
+
+  <div class="nav">
+    <button onclick="prevSlide()">‹</button>
+    <button onclick="nextSlide()">›</button>
+  </div>
+
+  <script>
+const slides = [...document.querySelectorAll('.slide')];
+let current = 0;
+function showSlide(i){
+  current = (i + slides.length) % slides.length;
+  slides.forEach((s,idx)=>s.classList.toggle('active', idx===current));
+  document.getElementById('progress').style.width = ((current+1)/slides.length*100)+'%';
+}
+function nextSlide(){showSlide(current+1)}
+function prevSlide(){showSlide(current-1)}
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' || e.key==='PageDown' || e.key===' ') nextSlide();
+  if(e.key==='ArrowLeft' || e.key==='PageUp') prevSlide();
+});
+showSlide(0);
+
+// Basic stack demo
+let values = [2,3,5];
+let nextValue = 7;
+function renderStack(msg){
+  const shell = document.getElementById('stackShell');
+  if(!shell) return;
+  shell.innerHTML = '';
+  values.forEach((v,i)=>{
+    const div = document.createElement('div');
+    div.className = 'stack-item' + (i===values.length-1 ? ' top' : '');
+    div.textContent = v;
+    shell.appendChild(div);
+  });
+  document.getElementById('stackStatus').innerHTML = msg || `Stack hiện có <code>${values.length}</code> phần tử. Đỉnh stack là <code>${values[values.length-1] ?? 'null'}</code>.`;
+}
+function pushStack(){
+  if(values.length >= 6){
+    renderStack('Stack minh hoạ đã đầy. Trong cài đặt thực tế cần mở rộng mảng hoặc dùng linked list.');
+    return;
+  }
+  values.push(nextValue);
+  renderStack(`<b>push(${nextValue})</b>: thêm phần tử mới vào top.`);
+  nextValue += 2;
+}
+function popStack(){
+  if(values.length===0){
+    renderStack('<b>pop()</b>: lỗi underflow vì stack đang rỗng.');
+    return;
+  }
+  const x = values.pop();
+  renderStack(`<b>pop()</b>: lấy ra <code>${x}</code>. Top dịch xuống phần tử kế tiếp.`);
+}
+function resetStack(){values=[2,3,5];nextValue=7;renderStack('Reset stack về trạng thái ban đầu.');}
+renderStack();
+
+// Dynamic array demo
+let arrData = [2,3,5];
+let arrCapacity = 4;
+let arrNext = 7;
+function renderArrayDemo(msg, flash=false){
+  const line = document.getElementById('arrayLine');
+  if(!line) return;
+  line.innerHTML='';
+  for(let i=0;i<arrCapacity;i++){
+    const div=document.createElement('div');
+    div.className='slot ' + (i<arrData.length?'filled':'empty') + (i===arrData.length-1?' top':'');
+    div.textContent = i<arrData.length ? arrData[i] : '';
+    line.appendChild(div);
+  }
+  const stage = document.getElementById('arrayStage');
+  if(flash){stage.classList.remove('expand-flash'); void stage.offsetWidth; stage.classList.add('expand-flash');}
+  document.getElementById('capacityNote').textContent = `size = ${arrData.length}, capacity = ${arrCapacity}`;
+  document.getElementById('arrayStatus').innerHTML = msg || `Mảng còn <code>${arrCapacity-arrData.length}</code> ô trống. Nếu size == capacity thì gọi <code>enlarge()</code>.`;
+}
+function pushArrayDemo(){
+  let msg=''; let flash=false;
+  if(arrData.length===arrCapacity){
+    const old=arrCapacity; arrCapacity*=2; flash=true;
+    msg += `<b>enlarge()</b>: capacity ${old} → ${arrCapacity}. Copy toàn bộ dữ liệu sang mảng mới.<br>`;
+  }
+  arrData.push(arrNext);
+  msg += `<b>push(${arrNext})</b>: ghi vào ô top mới.`;
+  arrNext += 2;
+  renderArrayDemo(msg, flash);
+}
+function resetArrayDemo(){arrData=[2,3,5];arrCapacity=4;arrNext=7;renderArrayDemo('Reset dynamic array stack.');}
+renderArrayDemo();
+
+// Linked list demo
+let listData=[7,5,3];
+let listNext=9;
+function renderList(msg){
+  const stage=document.getElementById('listStage');
+  if(!stage) return;
+  stage.innerHTML='';
+  if(listData.length===0){
+    stage.innerHTML='<div class="ptr">top</div><div class="ptr">→</div><div class="null-box">null</div>';
+  } else {
+    listData.forEach((v,i)=>{
+      const node=document.createElement('div');
+      node.className='node '+(i===0?'top-node':'');
+      node.innerHTML=`<div class="data">${v}</div><div class="next">next</div>`;
+      stage.appendChild(node);
+      const arrow=document.createElement('div');
+      arrow.className='ptr'; arrow.textContent='→'; stage.appendChild(arrow);
+    });
+    const nul=document.createElement('div'); nul.className='null-box'; nul.textContent='null'; stage.appendChild(nul);
+  }
+  document.getElementById('listStatus').innerHTML = msg || `top đang trỏ tới node đầu tiên: <code>${listData[0] ?? 'null'}</code>.`;
+}
+function pushListDemo(){
+  listData.unshift(listNext);
+  renderList(`<b>push(${listNext})</b>: tạo node mới, node.next = top cũ, sau đó top = node mới.`);
+  listNext += 2;
+}
+function popListDemo(){
+  if(listData.length===0){renderList('<b>pop()</b>: lỗi underflow vì top == null.'); return;}
+  const x=listData.shift();
+  renderList(`<b>pop()</b>: lấy <code>${x}</code>, sau đó top = top.next.`);
+}
+function resetListDemo(){listData=[7,5,3];listNext=9;renderList('Reset linked-list stack.');}
+renderList();
+
+// Parentheses demo
+const parenExpr = '((18 + 24) * 36)';
+const parenChars = [...parenExpr].filter(c=>c==='(' || c===')');
+let parenIdx=0, parenSt=[], parenFailed=false;
+function renderParen(msg){
+  const expr=document.getElementById('parenExpr'); if(!expr) return;
+  expr.textContent=parenExpr;
+  const row=document.getElementById('parenTokens'); row.innerHTML='';
+  parenChars.forEach((t,i)=>{const s=document.createElement('span');s.className='token '+(i<parenIdx?'done':i===parenIdx?'current':'')+(parenFailed&&i===parenIdx?' bad':'');s.textContent=t;row.appendChild(s);});
+  const stack=document.getElementById('parenStack'); stack.innerHTML='';
+  parenSt.forEach(v=>{const d=document.createElement('div');d.className='mini-item';d.textContent=v;stack.appendChild(d);});
+  document.getElementById('parenStatus').innerHTML=msg || 'Bấm Step để duyệt lần lượt các dấu ngoặc.';
+  const res=document.getElementById('parenResult');
+  if(parenFailed) res.innerHTML='<span style="color:#813333">false</span>';
+  else if(parenIdx>=parenChars.length) res.innerHTML=parenSt.length===0?'<span style="color:#285c41">true</span>':'<span style="color:#813333">false</span>';
+  else res.textContent='Đang kiểm tra...';
+}
+function parenStep(){
+  if(parenIdx>=parenChars.length || parenFailed){renderParen('Đã kết thúc. Bấm reset để chạy lại.'); return;}
+  const c=parenChars[parenIdx++];
+  if(c==='('){parenSt.push(c); renderParen(`Gặp <code>(</code>: push vào stack.`);}
+  else{
+    if(parenSt.length===0){parenFailed=true; renderParen(`Gặp <code>)</code> khi stack rỗng → sai.`);}
+    else{parenSt.pop(); renderParen(`Gặp <code>)</code>: pop một dấu <code>(</code> tương ứng.`);}
+  }
+  if(parenIdx>=parenChars.length && !parenFailed){
+    renderParen(parenSt.length===0?'Duyệt xong và stack rỗng → biểu thức đúng ngoặc.':'Duyệt xong nhưng stack vẫn còn dấu mở → sai.');
+  }
+}
+function parenReset(){parenIdx=0;parenSt=[];parenFailed=false;renderParen('Reset kiểm tra ngoặc.');}
+renderParen();
+
+// Postfix demo
+const postTokens=['6','2','4','+','*'];
+let postIdx=0, postStack=[];
+function renderPost(msg){
+  const row=document.getElementById('postTokens'); if(!row) return;
+  row.innerHTML='';
+  postTokens.forEach((t,i)=>{const s=document.createElement('span');s.className='token '+(i<postIdx?'done':i===postIdx?'current':'');s.textContent=t;row.appendChild(s);});
+  const stack=document.getElementById('postStack'); stack.innerHTML='';
+  postStack.forEach(v=>{const d=document.createElement('div');d.className='mini-item';d.textContent=v;stack.appendChild(d);});
+  document.getElementById('postStatus').innerHTML=msg || 'Bấm Step để tính biểu thức hậu tố.';
+  const res=document.getElementById('postResult');
+  res.innerHTML = postIdx>=postTokens.length && postStack.length===1 ? `Kết quả: <span class="accent">${postStack[0]}</span>` : 'Đang tính...';
+}
+function postStep(){
+  if(postIdx>=postTokens.length){renderPost('Đã kết thúc. Bấm reset để chạy lại.'); return;}
+  const t=postTokens[postIdx++];
+  if(/^\d+$/.test(t)){
+    postStack.push(Number(t));
+    renderPost(`Gặp toán hạng <code>${t}</code>: push vào stack.`);
+  } else {
+    const b=postStack.pop();
+    const a=postStack.pop();
+    let r; if(t==='+') r=a+b; else if(t==='-') r=a-b; else if(t==='*') r=a*b; else r=Math.trunc(a/b);
+    postStack.push(r);
+    renderPost(`Gặp toán tử <code>${t}</code>: pop <code>b=${b}</code>, <code>a=${a}</code>, tính <code>a ${t} b = ${r}</code>, rồi push kết quả.`);
+  }
+}
+function postReset(){postIdx=0;postStack=[];renderPost('Reset tính hậu tố.');}
+renderPost();
+  </script>
+</body>
+</html>
